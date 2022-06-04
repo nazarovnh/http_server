@@ -37,7 +37,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>it.sevenbits.http.server.Main</mainClass>
+                            <mainClass>Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -53,7 +53,7 @@
                         <descriptorRef>jar-with-dependencies</descriptorRef>
                     </descriptorRefs>
                     <archive><manifest>
-                        <mainClass>it.sevenbits.http.server.Main</mainClass>
+                        <mainClass>Main</mainClass>
                     </manifest></archive>
                 </configuration>
                 <executions>

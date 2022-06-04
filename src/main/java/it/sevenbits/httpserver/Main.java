@@ -1,8 +1,7 @@
-package it.sevenbits.http.server;
+package it.sevenbits.httpserver;
 
-import it.sevenbits.http.server.core.ServerListenerThread;
+import it.sevenbits.httpserver.core.ServerListenerThread;
 
-import java.io.BufferedReader;
 import java.io.IOException;
 
 
