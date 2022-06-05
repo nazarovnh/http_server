@@ -61,5 +61,9 @@ public class HttpRequest {
             System.out.println(key + "=" + value);
         });
     }
+
+    public String getQuery(String name) {
+        return queryString.get(name);
+    }
 }
 

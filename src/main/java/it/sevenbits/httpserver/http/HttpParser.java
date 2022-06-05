@@ -16,16 +16,16 @@ public class HttpParser {
     private static final int CR = 13;// 13 in ASCII
     private static final int LF = 10;// 10 in ASCII
 
-    public void parseHttpRequest(InputStream inputStream) {
+    public HttpRequest parseHttpRequest(InputStream inputStream) {
+        HttpRequest httpRequest = new HttpRequest();
         try {
             InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.US_ASCII);
-            HttpRequest httpRequest = new HttpRequest();
             parseRequestLine(reader, httpRequest);
             parseHeaders(reader, httpRequest);
-//            parseBody(reader, httpRequest);
         } catch (IOException e) {
             e.printStackTrace();
         }
+        return httpRequest;
     }
 
     /**
