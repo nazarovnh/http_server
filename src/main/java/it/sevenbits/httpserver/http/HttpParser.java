@@ -1,6 +1,7 @@
 package it.sevenbits.httpserver.http;
 
 import it.sevenbits.httpserver.core.ServerListenerThread;
+import it.sevenbits.httpserver.core.exception.HttpException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -16,14 +17,22 @@ public class HttpParser {
     private static final int CR = 13;// 13 in ASCII
     private static final int LF = 10;// 10 in ASCII
 
-    public HttpRequest parseHttpRequest(InputStream inputStream) {
+    /**
+     * Parse http request.
+     * First of all parse a request line, after headers of http request.
+     *
+     * @param inputStream - inputStream
+     * @return HttpRequest
+     */
+    public HttpRequest parseHttpRequest(InputStream inputStream) throws HttpException {
         HttpRequest httpRequest = new HttpRequest();
         try {
             InputStreamReader reader = new InputStreamReader(inputStream, StandardCharsets.US_ASCII);
             parseRequestLine(reader, httpRequest);
             parseHeaders(reader, httpRequest);
+            validate(httpRequest);
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
         return httpRequest;
     }
@@ -37,7 +46,7 @@ public class HttpParser {
      * @param httpRequest
      * @throws IOException
      */
-    private void parseRequestLine(InputStreamReader reader, HttpRequest httpRequest) throws IOException {
+    private void parseRequestLine(InputStreamReader reader, HttpRequest httpRequest) throws IOException, HttpException {
         StringBuilder stringBuilder = new StringBuilder();
         boolean isRequestTargetParred = false;
         boolean isMethodParsed = false;
@@ -91,8 +100,7 @@ public class HttpParser {
                         _byte = reader.read();
                         if (_byte == CR) {
                             httpRequest.parseHeaders(stringBuilder.toString());
-                            logger.info("Request http header: \n");
-                            httpRequest.printHeaders();
+                            logger.info("Request http header: \n{}", httpRequest.printHeaders());
                             return;
                         } else {
                             stringBuilder.append((char) CR);
@@ -106,12 +114,16 @@ public class HttpParser {
         }
     }
 
-    private void parseBody(InputStreamReader reader, HttpRequest httpRequest) {
-    }
-
+    /**
+     * Parse request target for get a query string.
+     *
+     * @param requestTarget - requestTarget
+     * @param httpRequest   - httpRequest
+     */
     private void parseRequestTarget(String requestTarget, HttpRequest httpRequest) {
         String[] uri = requestTarget.split("\\?");
-        if (Objects.equals(uri[0], "/hello") && uri.length == 2) {
+        httpRequest.setURI(uri[0]);
+        if (uri.length == 2) {
             StringBuilder stringBuilders = new StringBuilder(uri[1]);
             stringBuilders.append("&");
             String[] queryString = uri[1].split("&");
@@ -121,5 +133,22 @@ public class HttpParser {
                 httpRequest.addQuery(keyValue[0], keyValue.length == 2 ? keyValue[1] : "");
             }
         }
+    }
+
+    private void validate(HttpRequest request) throws HttpException {
+        if (!Objects.equals(request.getMethod(), "GET")) {
+            HttpException e = new HttpException("Method Not Allowed", "405");
+            e.setHttpVersion(request.getHttpVersion());
+            throw e;
+        } else if (!Objects.equals(request.getURI(), "/hello")) {
+            HttpException e = new HttpException("Not Found", "404");
+            e.setHttpVersion(request.getHttpVersion());
+            throw e;
+        } else if (!request.isContainsQueryName("name")) {
+            HttpException e = new HttpException("Bad Request", "400");
+            e.setHttpVersion(request.getHttpVersion());
+            throw e;
+        }
+
     }
 }

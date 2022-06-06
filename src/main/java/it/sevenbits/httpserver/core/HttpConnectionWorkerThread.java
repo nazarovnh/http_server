@@ -1,5 +1,6 @@
 package it.sevenbits.httpserver.core;
 
+import it.sevenbits.httpserver.core.exception.HttpException;
 import it.sevenbits.httpserver.http.HttpGenerateResponse;
 import it.sevenbits.httpserver.http.HttpParser;
 import it.sevenbits.httpserver.http.HttpRequest;
@@ -24,26 +25,32 @@ public class HttpConnectionWorkerThread extends Thread {
         httpGenerateResponse = new HttpGenerateResponse();
     }
 
+    /**
+     * Separate thread for working with one client socket
+     */
     @Override
     public void run() {
-        try {
-            try (OutputStream out = clientSocket.getOutputStream();
-                 InputStream in = clientSocket.getInputStream()) {
+        try (OutputStream out = clientSocket.getOutputStream();
+             InputStream in = clientSocket.getInputStream()) {
+            try {
                 HttpRequest httpRequest = httpParser.parseHttpRequest(in);
                 HttpResponse httpResponse = httpGenerateResponse.generateResponse(httpRequest);
-                //String html = "<html><head><title>WOW</title></head><body><h1>BUM</h1></body></html>";
-                //String response = "HTTP/1.1 200 OK" + CRLF + "Content-Length: " + html.getBytes().length + CRLF + CRLF + html + CRLF + CRLF;
                 out.write(httpResponse.print().getBytes());
-                clientSocket.close();
-                logger.info("Connection closed");
+            } catch (HttpException e) {
+                out.write(e.printResponse().getBytes());
+            } catch (IOException ioException) {
+                logger.error(ioException.getMessage());
             }
+            clientSocket.close();
+            logger.info("Connection closed");
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         } finally {
             if (clientSocket != null) {
                 try {
                     clientSocket.close();
                 } catch (IOException e) {
+                    logger.error(e.getMessage());
                 }
             }
         }

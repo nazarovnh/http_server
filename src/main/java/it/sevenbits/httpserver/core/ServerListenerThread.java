@@ -15,6 +15,10 @@ public class ServerListenerThread extends Thread {
         this.port = port;
     }
 
+    /**
+     * Server listens a port.
+     * If request is received and handler him, after send a response
+     */
     @Override
     public void run() {
         try (ServerSocket serverSocket = new ServerSocket(this.port)) {
@@ -25,7 +29,7 @@ public class ServerListenerThread extends Thread {
                 workerThread.start();
             }
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
         logger.info("Server down");
     }

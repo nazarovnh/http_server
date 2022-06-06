@@ -16,6 +16,17 @@ public class HttpGenerateResponse {
     }};
 
 
+    /**
+     * Generate http response with basic structure
+     * Status-Line
+     * (( general-header
+     *  | response-header
+     *  | entity-header ) CRLF)
+     * CRLF
+     * [ message-body ]
+     * @param httpRequest - httpRequest
+     * @return HttpResponse
+     */
     public HttpResponse generateResponse(HttpRequest httpRequest) {
         HttpResponse httpResponse = new HttpResponse();
         generateStatusLine(httpResponse, httpRequest);
@@ -31,7 +42,6 @@ public class HttpGenerateResponse {
 
     private void generateHeaders(HttpResponse httpResponse, HttpRequest httpRequest) {
         httpResponse.addHeader("Content-Type", "text/plain");
-        int a = httpResponse.getMessageBody().getBytes().length;
         httpResponse.addHeader("Content-Length", String.valueOf(httpResponse.getMessageBody().getBytes().length + 3));
     }
 

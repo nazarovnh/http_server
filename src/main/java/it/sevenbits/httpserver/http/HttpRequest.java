@@ -7,8 +7,17 @@ public class HttpRequest {
     private String method = null;
     private String requestTarget = null;
     private String httpVersion = null;
+    private String URI = null;
     private Map<String, String> queryString = new HashMap<>();
     private Map<String, String> headers = new HashMap<>();
+
+    public void setURI(String URI) {
+        this.URI = URI;
+    }
+
+    public String getURI() {
+        return URI;
+    }
 
     public HttpRequest() {
     }
@@ -56,14 +65,20 @@ public class HttpRequest {
         }
     }
 
-    public void printHeaders() {
+    public String printHeaders() {
+        StringBuilder sb = new StringBuilder();
         headers.forEach((key, value) -> {
-            System.out.println(key + "=" + value);
+            sb.append(key + "=" + value + "\n");
         });
+        return sb.toString();
     }
 
     public String getQuery(String name) {
         return queryString.get(name);
+    }
+
+    public boolean isContainsQueryName(String name){
+        return queryString.containsKey(name);
     }
 }
 
