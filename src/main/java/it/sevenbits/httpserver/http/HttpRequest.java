@@ -80,5 +80,9 @@ public class HttpRequest {
     public boolean isContainsQueryName(String name) {
         return queryString.containsKey(name);
     }
+
+    public String getHeader(String header) {
+        return headers.get(header);
+    }
 }
 

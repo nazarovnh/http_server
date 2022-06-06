@@ -148,6 +148,10 @@ public class HttpParser {
             HttpException e = new HttpException("Bad Request", "400");
             e.setHttpVersion(request.getHttpVersion());
             throw e;
+        } else if (Objects.equals(request.getHeader("Connection"), "keep-alive")) {
+            HttpException e = new HttpException("Not Implemented", "501");
+            e.setHttpVersion(request.getHttpVersion());
+            throw e;
         }
 
     }
