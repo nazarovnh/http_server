@@ -70,14 +70,14 @@ public class HttpRequest {
         headers.forEach((key, value) -> {
             sb.append(key + "=" + value + "\n");
         });
-        return sb.toString();
+        return sb.deleteCharAt(sb.length() - 1).toString();
     }
 
     public String getQuery(String name) {
         return queryString.get(name);
     }
 
-    public boolean isContainsQueryName(String name){
+    public boolean isContainsQueryName(String name) {
         return queryString.containsKey(name);
     }
 }

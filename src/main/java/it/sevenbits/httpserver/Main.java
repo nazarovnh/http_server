@@ -17,7 +17,7 @@ final class Main {
      */
     public static void main(final String[] args) {
         try {
-            ServerListenerThread serverListenerThread = new ServerListenerThread(8081);
+            ServerListenerThread serverListenerThread = new ServerListenerThread(Integer.parseInt(args[0]));
             serverListenerThread.start();
         } catch (IOException e) {
             e.printStackTrace();
